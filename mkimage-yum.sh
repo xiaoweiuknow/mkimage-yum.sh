@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Create a base CentOS Docker image.
+# Create a base CentOS 7.x Docker image.
 #
 # This script is useful on systems with yum installed (e.g., building
 # a CentOS image on CentOS).  See contrib/mkimage-rinse.sh for a way
@@ -122,6 +122,7 @@ if [ -d /etc/yum/vars ]; then
 	cp -a /etc/yum/vars "$target"/etc/yum/
 fi
 
+# install environment group
 if [[ -n "$install_env_group" ]];
 then
     yum -c "$yum_config" --installroot="$target" --releasever=/ --setopt=tsflags=nodocs \
@@ -132,56 +133,57 @@ fi
 cp /etc/yum.repos.d/CentOS-Base.repo "$target"/etc/yum.repos.d/
 
 #Create docker-image-info file
-echo "Date/Time Created" > "$target"/etc/docker-image-info
-echo "-----------------------------" >> "$target"/etc/docker-image-info
-date  >> "$target"/etc/docker-image-info
-echo "" >> "$target"/etc/docker-image-info
-echo "Created By" >> "$target"/etc/docker-image-info
-echo "-----------------------------" >> "$target"/etc/docker-image-info
-echo $creator >> "$target"/etc/docker-image-info
-echo "" >> "$target"/etc/docker-image-info
-echo "Environment Group Installed" >> "$target"/etc/docker-image-info
-echo "-----------------------------" >> "$target"/etc/docker-image-info
-echo $install_env_group >> "$target"/etc/docker-image-info
-echo "" >> "$target"/etc/docker-image-info
-echo "Packages Removed" >> "$target"/etc/docker-image-info
-echo "-----------------------------" >> "$target"/etc/docker-image-info
+info_file="$target"/etc/docker-image-info
+echo "Date/Time Created" > $info_file
+echo "-----------------------------" >> $info_file
+date  >> $info_file
+echo "" >> $info_file
+echo "Created By" >> $info_file
+echo "-----------------------------" >> $info_file
+echo $creator >> $info_file
+echo "" >> $info_file
+echo "Environment Group Installed" >> $info_file
+echo "-----------------------------" >> $info_file
+echo $install_env_group >> $info_file
+echo "" >> $info_file
+echo "Packages Removed" >> $info_file
+echo "-----------------------------" >> $info_file
 
+# remove packages
 if [[ -n "$remove_packages" ]];
 then
-    for package_removal in "${remove_packages[@]}";
-    do
-    yum -c "$yum_config" --installroot="$target" --releasever=/ --setopt=tsflags=nodocs \
-        --setopt=group_package_types=mandatory -y remove "$package_removal"
-    echo $package_removal >> "$target"/etc/docker-image-info
+    for package_removal in "${remove_packages[@]}"; do
+      yum -c "$yum_config" --installroot="$target" --releasever=/ --setopt=tsflags=nodocs \
+          --setopt=group_package_types=mandatory -y remove "$package_removal"
+      echo $package_removal >> $info_file
     done
 fi
 
-echo "" >> "$target"/etc/docker-image-info
-echo "Other Groups Installed" >> "$target"/etc/docker-image-info
-echo "-----------------------------" >> "$target"/etc/docker-image-info
+# install other groups
+echo "" >> $info_file
+echo "Other Groups Installed" >> $info_file
+echo "-----------------------------" >> $info_file
 
 if [[ -n "$install_other_groups" ]];
 then
-    for group_name in "${install_other_groups[@]}";
-    do
-    yum -c "$yum_config" --installroot="$target" --releasever=/ --setopt=tsflags=nodocs \
-        --setopt=group_package_types=mandatory -y groupinstall "$group_name"
-    echo $group_name >> "$target"/etc/docker-image-info
+    for group_name in "${install_other_groups[@]}"; do
+      yum -c "$yum_config" --installroot="$target" --releasever=/ --setopt=tsflags=nodocs \
+          --setopt=group_package_types=mandatory -y groupinstall "$group_name"
+      echo $group_name >> $info_file
     done
 fi
 
-echo "" >> "$target"/etc/docker-image-info
-echo "Additional Packages Installed" >> "$target"/etc/docker-image-info
-echo "-----------------------------" >> "$target"/etc/docker-image-info
+# install additional packages
+echo "" >> $info_file
+echo "Additional Packages Installed" >> $info_file
+echo "-----------------------------" >> $info_file
 
 if [[ -n "$install_packages" ]];
 then
-    for package_name in "${install_packages[@]}";
-    do
-    yum -c "$yum_config" --installroot="$target" --releasever=/ --setopt=tsflags=nodocs \
-        --setopt=group_package_types=mandatory -y install "$package_name"
-    echo $package_name >> "$target"/etc/docker-image-info
+    for package_name in "${install_packages[@]}"; do
+      yum -c "$yum_config" --installroot="$target" --releasever=/ --setopt=tsflags=nodocs \
+          --setopt=group_package_types=mandatory -y install "$package_name"
+      echo $package_name >> $info_file
     done
 fi
 
@@ -227,6 +229,7 @@ fi
 
 tar --numeric-owner -c -C "$target" . | docker import - $name:$version -m "Owner: $creator"
 
+#show info file
 docker run -i -t --rm $name:$version /bin/bash -c 'cat /etc/docker-image-info'
 
 rm -rf "$target"
