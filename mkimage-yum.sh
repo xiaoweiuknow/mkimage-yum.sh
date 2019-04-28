@@ -9,7 +9,7 @@
 set -e
 
 clear
-echo "Centos 7.x Image Build Script"
+echo "Centos 7.x Image Build Script (2019-0428-a)"
 echo "------------------------------------------------------------"
 echo "Default is to work with local repository"
 echo "comment following line if public repository will be used:"
