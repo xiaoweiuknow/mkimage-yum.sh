@@ -134,6 +134,9 @@ cp /etc/yum.repos.d/CentOS-Base.repo "$target"/etc/yum.repos.d/
 
 #Create docker-image-info file
 info_file="$target"/etc/docker-image-info
+echo "Base Image Name and Version:" > $info_file
+echo $name:$version >> $info_file
+echo "" >> $info_file
 echo "Date/Time Created" > $info_file
 echo "-----------------------------" >> $info_file
 date  >> $info_file
