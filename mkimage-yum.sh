@@ -131,6 +131,8 @@ fi
 
 #Copy host repo to image. Disable this if using public repositories
 cp /etc/yum.repos.d/CentOS-Base.repo "$target"/etc/yum.repos.d/
+#For Oracle Linux use:
+#cp /etc/yum.repos.d/public-yum-ol7.repo "$target"/etc/yum.repos.d/
 
 #Create docker-image-info file
 info_file="$target"/etc/docker-image-info
