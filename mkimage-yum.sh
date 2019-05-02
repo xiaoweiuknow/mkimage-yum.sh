@@ -1,24 +1,24 @@
 #!/usr/bin/env bash
 #
-# Create a base CentOS 7.x Docker image.
+# Create a base CentOS or Oracle Linux 7.x Docker image.
 #
-# This script is useful on systems with yum installed (e.g., building
-# a CentOS image on CentOS).  See contrib/mkimage-rinse.sh for a way
-# to build CentOS images on other systems.
+# This script is useful on systems with yum installed.
 
 set -e
 
 clear
-echo "Centos 7.x Image Build Script"
-echo "------------------------------------------------------------"
-echo "Default is to work with local repository"
-echo "comment following line if public repository will be used:"
-echo "  cp /etc/yum.repos.d/CentOS-Base.repo ..../etc/yum.repos.d/"
+echo "Centos or Oracle Linux  7.x Image Build Script via adoc"
+echo "package commands"
 echo ""
-echo "To see possible group names run:"
-echo "  sudo yum group list"
+echo "------------------------------------------------------------"
+echo "Default is to work with Centos repo. Edit WHICH REPO section to"
+echo "use Oracle Linux repo"
+echo ""
+echo "To see possible group names run: sudo yum group list"
 echo "------------------------------------------------------------"
 echo ""
+echo ""
+
 
 usage() {
     cat <<EOOPTS
@@ -129,10 +129,12 @@ then
         --setopt=group_package_types=mandatory -y groupinstall "${install_env_group[*]}"
 fi
 
-#Copy host repo to image. Disable this if using public repositories
+#Which repo - choose only one below
+#For Centos use:
 cp /etc/yum.repos.d/CentOS-Base.repo "$target"/etc/yum.repos.d/
 #For Oracle Linux use:
 #cp /etc/yum.repos.d/public-yum-ol7.repo "$target"/etc/yum.repos.d/
+
 
 #Create docker-image-info file
 info_file="$target"/etc/docker-image-info

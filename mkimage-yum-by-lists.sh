@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
 #
-# Create a base CentOS 7.x Docker image.
+# Create a base CentOS or Oracle Linux 7.x Docker image.
 #
-# This script is useful on systems with yum installed (e.g., building
-# a CentOS image on CentOS).  See contrib/mkimage-rinse.sh for a way
-# to build CentOS images on other systems.
+# This script is useful on systems with yum installed.
 
 set -e
 
 clear
-echo "Centos 7.x Image Build Script"
-echo "------------------------------------------------------------"
-echo "Default is to work with local repository"
-echo "comment following line if public repository will be used:"
-echo "  cp /etc/yum.repos.d/CentOS-Base.repo ..../etc/yum.repos.d/"
+echo "Centos or Oracle Linux  7.x Image Build Script by lists"
+echo "edit working_folder variable for where you placed the list files"
+echo "add-packages.txt, remove-packages.txt"
 echo ""
-echo "To see possible group names run:"
-echo "  sudo yum group list"
 echo "------------------------------------------------------------"
+echo "Default is to work with Centos repo. Edit WHICH REPO section to"
+echo "use Oracle Linux repo"
+echo ""
+echo "To see possible group names run: sudo yum group list"
+echo "------------------------------------------------------------"
+echo ""
 echo ""
 
 usage() {
@@ -117,7 +117,8 @@ then
         --setopt=group_package_types=mandatory -y groupinstall "${install_env_group[*]}"
 fi
 
-#Copy host repo to image. Disable this if using public repositories
+#Which repo - choose only one below
+#For Centos use:
 cp /etc/yum.repos.d/CentOS-Base.repo "$target"/etc/yum.repos.d/
 #For Oracle Linux use:
 #cp /etc/yum.repos.d/public-yum-ol7.repo "$target"/etc/yum.repos.d/
@@ -145,8 +146,8 @@ echo "-----------------------------" >> $info_file
 # remove packages
 rm -f "$target"/etc/yum/protected.d/systemd.conf
 #note that the above file should also be removed on the host running this script
-
-package_removal_list=/home/kenny/remove-packages.txt
+working_folder=/home/kenny/mkimage
+package_removal_list=$working_folder/remove-packages.txt
 while read package_removal;
     do
       yum -c "$yum_config" --installroot="$target" --releasever=/ --setopt=tsflags=nodocs \
@@ -173,7 +174,7 @@ echo "" >> $info_file
 echo "Additional Packages Installed" >> $info_file
 echo "-----------------------------" >> $info_file
 
-package_addition_list=/home/kenny/add-packages.txt
+package_addition_list=$working_folder/add-packages.txt
 while read package_name;
      do
       yum -c "$yum_config" --installroot="$target" --releasever=/ --setopt=tsflags=nodocs \
