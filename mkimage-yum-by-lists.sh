@@ -15,6 +15,8 @@ echo "------------------------------------------------------------"
 echo "Default is to work with Centos repo. Edit WHICH REPO section to"
 echo "use Oracle Linux repo"
 echo ""
+echo "Enable epel repo section to install packages from epel repo"
+echo ""
 echo "To see possible group names run: sudo yum group list"
 echo "------------------------------------------------------------"
 echo ""
@@ -122,6 +124,9 @@ fi
 cp /etc/yum.repos.d/CentOS-Base.repo "$target"/etc/yum.repos.d/
 #For Oracle Linux use:
 #cp /etc/yum.repos.d/public-yum-ol7.repo "$target"/etc/yum.repos.d/
+
+#Enable epel repo
+#cp /etc/yum.repos.d/epel.repo "$target"/etc/yum.repos.d/
 
 #Create docker-image-info file
 info_file="$target"/etc/docker-image-info
