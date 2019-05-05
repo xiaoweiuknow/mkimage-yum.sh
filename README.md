@@ -1,37 +1,13 @@
-## Welcome to GitHub Pages
+##Welcome to the kr1warren/mkimage-yum.sh wiki!
 
-You can use the [editor on GitHub](https://github.com/kr1warren/mkimage-yum.sh/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+Original source code for mkimage-yum.sh is located at: https://github.com/moby/moby/blob/master/contrib/mkimage-yum.sh
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+#Primary enhancements with this version include the following:
 
-### Markdown
+    Corrected ability to install multiple packages by adding a for loop.
+    Added ability to remove multiple packages.
+    Differentiate between environment groups and regular groups.
+    Added the /etc/docker-image-info file to record actions taking creating the container.
+    Added ability to use local repository. Which by default is enabled. Should disable this if public repositories to be used.
+    Added a creator option to record name of person who created the image to the layer history and info file.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/kr1warren/mkimage-yum.sh/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
