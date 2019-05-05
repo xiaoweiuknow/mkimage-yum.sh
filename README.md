@@ -1,4 +1,4 @@
-# Welcome to the kr1warren/mkimage-yum.sh wiki!
+# kr1warren/mkimage-yum.sh wiki!
 
 Original source code for mkimage-yum.sh is located at: https://github.com/moby/moby/blob/master/contrib/mkimage-yum.sh
 
