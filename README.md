@@ -1,8 +1,8 @@
-##Welcome to the kr1warren/mkimage-yum.sh wiki!
+# Welcome to the kr1warren/mkimage-yum.sh wiki!
 
 Original source code for mkimage-yum.sh is located at: https://github.com/moby/moby/blob/master/contrib/mkimage-yum.sh
 
-#Primary enhancements with this version include the following:
+## Primary enhancements with this version include the following:
 
     Corrected ability to install multiple packages by adding a for loop.
     Added ability to remove multiple packages.
