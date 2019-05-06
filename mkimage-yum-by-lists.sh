@@ -4,23 +4,23 @@
 #
 # This script is useful on systems with yum installed.
 
-set -e
+set +x
 
 clear
 echo "Centos or Oracle Linux  7.x Image Build Script by lists"
-echo "edit working_folder variable for where you placed the list files"
+echo "edit bin_folder variable for where you placed the list files"
 echo "add-packages.txt, remove-packages.txt"
-echo ""
+echo 
 echo "------------------------------------------------------------"
 echo "Default is to work with Centos repo. Edit WHICH REPO section to"
 echo "use Oracle Linux repo"
-echo ""
+echo 
 echo "Enable epel repo section to install packages from epel repo"
-echo ""
+echo 
 echo "To see possible group names run: sudo yum group list"
 echo "------------------------------------------------------------"
-echo ""
-echo ""
+echo 
+echo 
 
 usage() {
     cat <<EOOPTS
@@ -46,6 +46,10 @@ if [ -f /etc/dnf/dnf.conf ] && command -v dnf &> /dev/null; then
 	yum_config=/etc/dnf/dnf.conf
 	alias yum=dnf
 fi
+
+#set bin folder
+bin_folder=/home/kenny/mkimage
+
 # for names with spaces, use double quotes (") as install_env_group=('Core' '"Compute Node"')
 install_env_group=()
 install_packages=()
@@ -132,27 +136,26 @@ cp /etc/yum.repos.d/CentOS-Base.repo "$target"/etc/yum.repos.d/
 info_file="$target"/etc/docker-image-info
 echo "Base Image Name and Version:" > $info_file
 echo $name:$version >> $info_file
-echo "" >> $info_file
+echo  >> $info_file
 echo "Date/Time Created" >> $info_file
 echo "-----------------------------" >> $info_file
 date  >> $info_file
-echo "" >> $info_file
+echo  >> $info_file
 echo "Created By" >> $info_file
 echo "-----------------------------" >> $info_file
 echo $creator >> $info_file
-echo "" >> $info_file
+echo  >> $info_file
 echo "Environment Group Installed" >> $info_file
 echo "-----------------------------" >> $info_file
 echo $install_env_group >> $info_file
-echo "" >> $info_file
+echo  >> $info_file
 echo "Packages Removed" >> $info_file
 echo "-----------------------------" >> $info_file
 
 # remove packages
 rm -f "$target"/etc/yum/protected.d/systemd.conf
 #note that the above file should also be removed on the host running this script
-working_folder=/home/kenny/mkimage
-package_removal_list=$working_folder/remove-packages.txt
+package_removal_list=$bin_folder/remove-packages.txt
 while read package_removal;
     do
       yum -c "$yum_config" --installroot="$target" --releasever=/ --setopt=tsflags=nodocs \
@@ -179,7 +182,7 @@ echo "" >> $info_file
 echo "Additional Packages Installed" >> $info_file
 echo "-----------------------------" >> $info_file
 
-package_addition_list=$working_folder/add-packages.txt
+package_addition_list=$bin_folder/add-packages.txt
 while read package_name;
      do
       yum -c "$yum_config" --installroot="$target" --releasever=/ --setopt=tsflags=nodocs \
@@ -226,6 +229,10 @@ if [ -z "$version" ]; then
     echo >&2 "warning: cannot autodetect OS version, using '$name' as tag"
     version=$name
 fi
+
+#copy clean-image.sh
+cp $bin_folder/clean-pre-image.sh $target/root/
+chroot $target /bin/bash -c "chmod 755 /root/clean-pre-image.sh"
 
 tar --numeric-owner -c -C "$target" . | docker import - $name:$version -m "Owner: $creator"
 

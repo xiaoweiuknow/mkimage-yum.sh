@@ -26,8 +26,8 @@ echo "Enable epel repo section to install packages from epel repo"
 echo ""
 echo "To see possible group names run: sudo yum group list"
 echo "------------------------------------------------------------"
-echo ""
-echo ""
+echo 
+echo 
 
 usage() {
     cat <<EOOPTS
@@ -50,6 +50,10 @@ if [ -f /etc/dnf/dnf.conf ] && command -v dnf &> /dev/null; then
 	yum_config=/etc/dnf/dnf.conf
 	alias yum=dnf
 fi
+
+#set bin folder
+bin_folder=/home/kenny/mkimage
+
 # for names with spaces, use double quotes (") as install_env_group=('Core' '"Compute Node"')
 install_env_group=()
 install_packages=()
@@ -142,7 +146,7 @@ echo "-----------------------------" >> $info_file
 rm -f "$target"/etc/yum/protected.d/systemd.conf
 #note that the above file should also be removed on the host running this script
 
-bin_folder=/home/kenny/mkimage
+in_folder=/home/kenny/mkimage
 package_removal_list=$bin_folder/remove-packages.txt
 while read package_removal;
     do
@@ -212,6 +216,10 @@ if [ -z "$version" ]; then
         fi
     done
 fi
+
+#copy clean-image.sh
+cp $bin_folder/clean-pre-image.sh $target/root/
+chroot $target /bin/bash -c "chmod 755 /root/clean-pre-image.sh"
 
 #move tmp folder to work folder
 mv $target $work_folder

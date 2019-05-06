@@ -4,22 +4,22 @@
 #
 # This script is useful on systems with yum installed.
 
-set -e
-
 clear
+set +x
+
 echo "Centos or Oracle Linux  7.x Image Build Script via adoc"
 echo "package commands"
-echo ""
+echo 
 echo "------------------------------------------------------------"
 echo "Default is to work with Centos repo. Edit WHICH REPO section to"
 echo "use Oracle Linux repo"
-echo ""
+echo 
 echo "Enable epel repo section to install packages from epel repo"
-echo ""
+echo 
 echo "To see possible group names run: sudo yum group list"
 echo "------------------------------------------------------------"
-echo ""
-echo ""
+echo 
+echo 
 
 
 usage() {
@@ -52,6 +52,10 @@ if [ -f /etc/dnf/dnf.conf ] && command -v dnf &> /dev/null; then
 	yum_config=/etc/dnf/dnf.conf
 	alias yum=dnf
 fi
+
+#set bin folder
+bin_folder=/home/kenny/mkimage
+
 # for names with spaces, use double quotes (") as install_env_group=('Core' '"Compute Node"')
 install_env_group=()
 install_packages=()
@@ -144,19 +148,19 @@ cp /etc/yum.repos.d/CentOS-Base.repo "$target"/etc/yum.repos.d/
 info_file="$target"/etc/docker-image-info
 echo "Base Image Name and Version:" > $info_file
 echo $name:$version >> $info_file
-echo "" >> $info_file
+echo  >> $info_file
 echo "Date/Time Created" >> $info_file
 echo "-----------------------------" >> $info_file
 date  >> $info_file
-echo "" >> $info_file
+echo  >> $info_file
 echo "Created By" >> $info_file
 echo "-----------------------------" >> $info_file
 echo $creator >> $info_file
-echo "" >> $info_file
+echo  >> $info_file
 echo "Environment Group Installed" >> $info_file
 echo "-----------------------------" >> $info_file
 echo $install_env_group >> $info_file
-echo "" >> $info_file
+echo  >> $info_file
 echo "Packages Removed" >> $info_file
 echo "-----------------------------" >> $info_file
 
@@ -237,6 +241,10 @@ if [ -z "$version" ]; then
     echo >&2 "warning: cannot autodetect OS version, using '$name' as tag"
     version=$name
 fi
+
+#copy clean-image.sh
+cp $bin_folder/clean-pre-image.sh $target/root/
+chroot $target /bin/bash -c "chmod 755 /root/clean-pre-image.sh"
 
 tar --numeric-owner -c -C "$target" . | docker import - $name:$version -m "Owner: $creator"
 
